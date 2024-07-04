@@ -14,6 +14,10 @@
 
 import * as Log from './util/logging.js';
 
+import {WebSocket as WsWebSocket} from "ws";
+
+const NodeWebSocket = WebSocket;
+
 // this has performance issues in some versions Chromium, and
 // doesn't gain a tremendous amount of performance increase in Firefox
 // at the moment.  It may be valuable to turn it on in the future.
@@ -48,7 +52,9 @@ const rawChannelProps = [
 ];
 
 export default class Websock {
-    constructor() {
+    constructor(webSocketOptions) {
+        this._webSocketOptions = webSocketOptions;
+
         this._websocket = null;  // WebSocket or RTCDataChannel object
 
         this._rQi = 0;           // Receive queue index
@@ -205,7 +211,7 @@ export default class Websock {
     }
 
     open(uri, protocols) {
-        this.attach(new WebSocket(uri, protocols));
+        this.attach(new WsWebSocket(uri, protocols, this._webSocketOptions));
     }
 
     attach(rawChannel) {
